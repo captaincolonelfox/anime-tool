@@ -193,7 +193,7 @@ sub penetrateArray {
 			$extracted = substr($filename, $startposition, $endposition-$startposition+1);
 		}
 	}
-	
+
 	#print "$extracted,$startposition,$endposition,$number\n";
 
 	return ($startposition,$endposition,$number);
@@ -266,18 +266,7 @@ sub filterOnlyEpidodes {
 	}
 	#print Dumper(@weights);
 
-	my $heaviest_scope = 0;
-	my $maxweight = 0;
-	
-	foreach my $i (0..scalar(@weights)-1) {
-		if ($weights[$i] > 0) {
-			if ($debug) { print "Scope length: $i Weight: $weights[$i]\n" };
-			if ($maxweight < $weights[$i]) {
-				$maxweight = $weights[$i];
-				$heaviest_scope = $i;
-			}
-		}
-	}
+	my $heaviest_scope = calculate_heaviest_scope(\@weights);
 
 	if ($debug) { print "Heaviest scope: $heaviest_scope\n" };
 
@@ -353,6 +342,25 @@ sub filterOnlyEpidodes {
 	#exit;
 
 	return sort @clean_result;
+}
+
+sub calculate_heaviest_scope {
+	my $heaviest_scope = 0;
+	my $maxweight = 0;
+
+	my @weights = @{$_[0]};
+	
+	foreach my $i (0..scalar(@weights)-1) {
+		if ($weights[$i] > 0) {
+			if ($debug) { print "Scope length: $i Weight: $weights[$i]\n" };
+			if ($maxweight < $weights[$i]) {
+				$maxweight = $weights[$i];
+				$heaviest_scope = $i;
+			}
+		}
+	}
+
+	return $heaviest_scope;
 }
 
 sub create_mask_array {
