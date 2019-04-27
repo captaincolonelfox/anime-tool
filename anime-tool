@@ -89,98 +89,93 @@ sub getDirFiles {
 
 sub penetrateArray {
 	# finding number position
-my $startposition = 0;
-my $endposition = 0;
-my $startedflag = -1;
-my $number = -1;
+	my $startposition = 0;
+	my $endposition = 0;
+	my $startedflag = -1;
+	my $number = -1;
 
-my $direction = shift @_;
-my @filtered = @_;
+	my $direction = shift @_;
+	my @filtered = @_;
 
-if ($direction) {
-	@filtered = reverse @_;
-	$number = 99999;
-}
+	if ($direction) {
+		@filtered = reverse @_;
+		$number = 99999;
+	}
 
-foreach my $filename (@filtered)
-{
-	for my $i (0..length($filename)-1){
-		
-		# skipping till current found number position
-		if ($i<$startposition) {
-			next;
-		}
-		#print "position: $i; $startedflag\n";
+	foreach my $filename (@filtered) {
+		for my $i (0..length($filename)-1) {
 
-    	my $char = substr($filename, $i, 1);
-    	if ($char =~ /[0-9]/) {
-    		#print "char: $char\n";
-    		# maybe number starts here
-    		if ($startedflag == -1) {
-    			$startposition = $i;
-    			$startedflag = 1;
+			# skipping till current found number position
+			if ($i<$startposition) {
+				next;
+			}
+			#print "position: $i; $startedflag\n";
 
-    			#print $startposition . "\n";
-    		} 
-    	} else {
-    		# if receive character
-    		#print "c";
-    		if ($startedflag != -1) {
-    			# if still seeking for number
-    			$endposition = $i-1;
-    			$startedflag = -1;
+    		my $char = substr($filename, $i, 1);
+    		if ($char =~ /[0-9]/) {
+	    		#print "char: $char\n";
+	    		# maybe number starts here
+	    		if ($startedflag == -1) {
+	    			$startposition = $i;
+	    			$startedflag = 1;
+	    			#print $startposition . "\n";
+	    		} 
+    		} else {
+	    		# if receive character
+	    		#print "c";
+	    		if ($startedflag != -1) {
+	    			# if still seeking for number
+	    			$endposition = $i-1;
+	    			$startedflag = -1;
 
-    			#print $endposition;
-    			# maybe we found number, maybe not. Now exiting, check if we are right next loop
-    			my $newnumber = substr($filename, $startposition, $endposition-$startposition +1);
-    			#print "\nnumber: $newnumber\n";
-    			if ($direction) {
-    			if ($number >= $newnumber+1) {
-    				# number incrementing, we may be correct
-    				$number = $newnumber;
-    				last;
-    			} else {
+	    			#print $endposition;
+	    			# maybe we found number, maybe not. Now exiting, check if we are right next loop
+	    			my $newnumber = substr($filename, $startposition, $endposition-$startposition +1);
+	    			#print "\nnumber: $newnumber\n";
+	    			if ($direction) {
+		    			if ($number >= $newnumber+1) {
+		    				# number incrementing, we may be correct
+		    				$number = $newnumber;
+		    				last;
+		    			} else {
 
-    				#print "number is crap maybe nickname or other shit\n";
-    				$number = -1;
+		    				#print "number is crap maybe nickname or other shit\n";
+		    				$number = -1;
 
-    				# if we are at the end resetting all shit
-    				if ($i >= getLastNumberPosition($filename)) {
-    					#print "we reached end\n";
-    					$startposition = 0;
-						$endposition = 0;
-						$startedflag = -1;
-						$number = 99999;
-						last;
-    				}
-    			}
-    			} else {
-    			if ($number <= $newnumber-1) {
-    				# number incrementing, we may be correct
-    				$number = $newnumber;
-    				last;
-    			} else {
+		    				# if we are at the end resetting all shit
+		    				if ($i >= getLastNumberPosition($filename)) {
+		    					#print "we reached end\n";
+		    					$startposition = 0;
+								$endposition = 0;
+								$startedflag = -1;
+								$number = 99999;
+								last;
+		    				}
+		    			}
+	    			} else {
+		    			if ($number <= $newnumber-1) {
+		    				# number incrementing, we may be correct
+		    				$number = $newnumber;
+		    				last;
+		    			} else {
 
-    				#print "number is crap maybe nickname or other shit\n";
-    				$number = -1;
+		    				#print "number is crap maybe nickname or other shit\n";
+		    				$number = -1;
 
-    				# if we are at the end resetting all shit
-    				if ($i >= getLastNumberPosition($filename)) {
-    					$startposition = 0;
-						$endposition = 0;
-						$startedflag = -1;
-						$number = -1;
-						last;
-    				}
-    			}	
-    			} 
-    			
+		    				# if we are at the end resetting all shit
+		    				if ($i >= getLastNumberPosition($filename)) {
+		    					$startposition = 0;
+								$endposition = 0;
+								$startedflag = -1;
+								$number = -1;
+								last;
+		    				}
+		    			}	
+	    			}	
+	    		}
     		}
     	}
-    	
 	}
-	
-}
 
 #print "$startposition,$endposition,$number\n";
 # validating
@@ -203,20 +198,20 @@ foreach my $filename (@filtered)
 }
 #print "$extracted,$startposition,$endposition,$number\n";
 
-return ($startposition,$endposition,$number);
-}
+return ($startposition,$endposition,$number);}
 
 sub getLastNumberPosition {
-my $string = shift @_;
-my $pos = 0;
-for my $i (0..length($string)-1){
-my $char = substr($string, $i, 1);
+	my $string = shift @_;
+	my $pos = 0;
+
+	for my $i (0..length($string)-1) {
+		my $char = substr($string, $i, 1);
     	if ($char =~ /[0-9]/) {
     		$pos = $i;
     	}
-}
+	}
 
-return $pos;
+	return $pos;
 }
 
 
@@ -232,9 +227,11 @@ sub filterOnlyEpidodes {
 	# masking array
 	my @array_mask = ();
 	my $counter = 0;
+
 	foreach my $filename (@dirtymix) {
 		my $current_mask = "";
-		for my $i (0..length($filename)-1){
+
+		for my $i (0..length($filename)-1) {
 			my $char = substr($filename, $i, 1);
 		
 			if ($char =~ /[0-9]/) {
@@ -243,11 +240,10 @@ sub filterOnlyEpidodes {
 			}			
 			# else
 			$current_mask .= $char;
-			next;
-			
-		}	
-		$array_mask[$counter++] = $current_mask;
-		
+			next;	
+		}
+
+		$array_mask[$counter++] = $current_mask;	
 	}
 	#print Dumper(@array_mask);
 	
@@ -266,36 +262,35 @@ sub filterOnlyEpidodes {
 	}
 
 	#print Dumper(@array_mask);
-		my @previousmasks = ($array_mask[0]);
+	my @previousmasks = ($array_mask[0]);
+	#print Dumper(@previousmasks);
+	my $counter = 0;
+	foreach my $filename (@array_mask) {
 		#print Dumper(@previousmasks);
-		my $counter = 0;
-		foreach my $filename (@array_mask) {
-			#print Dumper(@previousmasks);
-			#print "$previousmask : $filename \n";
-			my $scope = length($filename)-1;
-			foreach my $mask (@previousmasks) {
-				my $current_scope = 0;
-				for my $i (0..length($filename)-1){
-					if (substr($filename, $i, 1) eq substr($mask, $i, 1)) {
-						$current_scope++;
-					} else {
-						if ($current_scope < $scope) {
-							$scope = $current_scope;
-						}
-						last;
+		#print "$previousmask : $filename \n";
+		my $scope = length($filename)-1;
+		foreach my $mask (@previousmasks) {
+			my $current_scope = 0;
+			for my $i (0..length($filename)-1) {
+				if (substr($filename, $i, 1) eq substr($mask, $i, 1)) {
+					$current_scope++;
+				} else {
+					if ($current_scope < $scope) {
+						$scope = $current_scope;
 					}
+					last;
+				}
 			}
-				
-			}
-
-			#print "$scope\n";
-			if ($scope < length($filename)-1) {
-				$weights[$scope]++;
-			}
-
-			#$previousmask = @array_mask[$counter++];
-			push @previousmasks, $array_mask[$counter++];
 		}
+
+		#print "$scope\n";
+		if ($scope < length($filename)-1) {
+			$weights[$scope]++;
+		}
+
+		#$previousmask = @array_mask[$counter++];
+		push @previousmasks, $array_mask[$counter++];
+	}
 	#print Dumper(@weights);
 
 	my $heaviest_scope = 0;
@@ -405,23 +400,23 @@ sub insaneFindFiles {
 	my $dropped_count = scalar(@args)-scalar(@filtered);
 	if ($dropped_count > 0) {
 		print "Dropped " . ($dropped_count) . " files\n";
-	}
+	};
 
-my @result = penetrateArray(0,@filtered);
+	my @result = penetrateArray(0,@filtered);
 
-my $startposition = shift @result;
-my $endposition = shift @result;
-my $number = shift @result;
-#print "TEST: L$startposition L$endposition L$number\n\n\n";
+	my $startposition = shift @result;
+	my $endposition = shift @result;
+	my $number = shift @result;
+	#print "TEST: L$startposition L$endposition L$number\n\n\n";
 
-if ($debug) { 
-	print "Found series numbers: ";
-	foreach my $filename (@filtered)
-	{
-		print substr($filename, $startposition, $endposition-$startposition + 1) . ",";
-	}
-	print "\n";
-};
+	if ($debug) { 
+		print "Found series numbers: ";
+		foreach my $filename (@filtered)
+		{
+			print substr($filename, $startposition, $endposition-$startposition + 1) . ",";
+		}
+		print "\n";
+	};
 
 	# generating hash
 	return generate_hashed_episodes_from(\@filtered, $startposition, $endposition);
