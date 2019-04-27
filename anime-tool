@@ -423,19 +423,26 @@ if ($debug) {
 	print "\n";
 };
 
-# generating array
-my %hashed_episodes = ();
-
-foreach my $filename (@filtered)
-{       
-	
-		my $episode_number = substr($filename, $startposition, $endposition-$startposition + 1);
-	if ($episode_number =~ /^[0-9]+$/) {
-		$hashed_episodes{$episode_number} = escape_crap($filename);
-	}
+	# generating hash
+	return generate_hashed_episodes_from(\@filtered, $startposition, $endposition);
 }
 
-return %hashed_episodes;
+sub generate_hashed_episodes_from {
+	# get arguments
+	my($filtered, $startposition, $endposition ) = @_;
+
+	# create empty hash
+	my %hashed_episodes = ();
+
+	# fill hash with episode:name
+	foreach my $filename (@$filtered) {
+		my $episode_number = substr($filename, $startposition, $endposition-$startposition + 1);
+		if ($episode_number =~ /^[0-9]+$/) {
+			$hashed_episodes{$episode_number} = escape_crap($filename);
+		}
+	}
+
+	return %hashed_episodes;
 }
 
 sub get_episode_key {
