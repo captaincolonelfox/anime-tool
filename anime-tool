@@ -225,26 +225,8 @@ sub filterOnlyEpidodes {
 	if ($debug) { print "\n" };
 
 	# masking array
-	my @array_mask = ();
-	my $counter = 0;
+	my @array_mask = create_mask_array(\@dirtymix);
 
-	foreach my $filename (@dirtymix) {
-		my $current_mask = "";
-
-		for my $i (0..length($filename)-1) {
-			my $char = substr($filename, $i, 1);
-		
-			if ($char =~ /[0-9]/) {
-				$current_mask .= '/';
-				next;
-			}			
-			# else
-			$current_mask .= $char;
-			next;	
-		}
-
-		$array_mask[$counter++] = $current_mask;	
-	}
 	#print Dumper(@array_mask);
 	
 	# generating character weights
@@ -381,6 +363,32 @@ sub filterOnlyEpidodes {
 
 	return sort @clean_result;
 }
+
+sub create_mask_array {
+	my @dirtymix = @{};
+	my @array_mask = ();
+	my $counter = 0;
+
+	foreach my $filename (@dirtymix) {
+		my $current_mask = "";
+
+		for my $i (0..length($filename)-1) {
+			my $char = substr($filename, $i, 1);
+		
+			if ($char =~ /[0-9]/) {
+				$current_mask .= '/';
+				next;
+			}			
+			# else
+			$current_mask .= $char;
+			next;	
+		}
+
+		$array_mask[$counter++] = $current_mask;	
+	}
+	return @array_mask;
+}
+
 
 sub insaneFindFiles {
 	my @args = @_;
