@@ -225,7 +225,7 @@ sub filterOnlyEpidodes {
 	if ($debug) { print "\n" };
 
 	# masking array
-	my @array_mask = create_mask_array(\@dirtymix);
+	my @array_mask = create_mask_array(\@dirtymix, $direction);
 
 	#print Dumper(@array_mask);
 	
@@ -233,14 +233,6 @@ sub filterOnlyEpidodes {
 	my @weights = ();
 	for my $i (0..length($array_mask[0])-1){
 		push @weights, 0;
-	}
-
-	if ($direction == 1) {
-		#mirroring masks
-		if ($debug) { print "Testing mirrored mode (going backwards)\n" };
-		for my $i (0..scalar(@array_mask)-1) {
-			$array_mask[$i] = join '', map substr($array_mask[$i], -$_, 1), 1..length($array_mask[$i]);
-		}
 	}
 
 	#print Dumper(@array_mask);
@@ -365,7 +357,8 @@ sub filterOnlyEpidodes {
 }
 
 sub create_mask_array {
-	my @dirtymix = @{};
+	my @dirtymix = @{$_[0]};
+	my $direction = $_[1];
 	my @array_mask = ();
 	my $counter = 0;
 
@@ -386,7 +379,25 @@ sub create_mask_array {
 
 		$array_mask[$counter++] = $current_mask;	
 	}
-	return @array_mask;
+
+	if ($direction == 1) {
+		return mirror_array_mask(\@array_mask);
+	}
+	else {
+		return @array_mask;
+	}
+}
+
+sub mirror_array_mask {
+	if ($debug) { print "Testing mirrored mode (going backwards)\n" };
+
+	my @mirrored_mask = @{$_[0]};
+
+	for my $i (0..scalar(@mirrored_mask)-1) {
+		$mirrored_mask[$i] = join '', map substr($mirrored_mask[$i], -$_, 1), 1..length($mirrored_mask[$i]);
+	}
+
+	return @mirrored_mask;
 }
 
 
